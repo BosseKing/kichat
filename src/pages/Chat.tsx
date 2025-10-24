@@ -211,6 +211,25 @@ export default function Chat() {
       console.error('Error sending message:', error);
       toast.error('Erreur lors de l\'envoi du message');
       setStreamingMessage('');
+      
+      // Supprimer le dernier message de l'utilisateur en cas d'erreur
+      if (!user) {
+        // Mode invité - supprimer le dernier message ajouté
+        setGuestMessages(prev => prev.slice(0, -1));
+      } else {
+        // Mode connecté - supprimer le message de la base de données et de l'état
+        if (messages.length > 0) {
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage.role === 'user') {
+            try {
+              await databases.deleteDocument(DATABASE_ID, MESSAGES_COLLECTION_ID, lastMessage.$id);
+              setMessages(prev => prev.slice(0, -1));
+            } catch (deleteError) {
+              console.error('Error deleting failed message:', deleteError);
+            }
+          }
+        }
+      }
     } finally {
       setIsLoading(false);
     }
