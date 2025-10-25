@@ -1,4 +1,4 @@
-const OPENROUTER_API_KEY = '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';
+const OPENROUTER_API_KEY = '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';
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export interface Message {
